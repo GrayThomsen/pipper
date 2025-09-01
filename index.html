@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=
     , initial-scale=1.0" />
-  <script src=""></script>
+  <script src="feed.js"></script>
+  <link rel="stylesheet" href="style.css">
   <meta />
   <title>Pipper</title>
 </head>
@@ -13,18 +14,43 @@
 <body>
   <h1>Pipper</h1>
 
-  <article>
-    <span>Logo</span>
-    <nav>Menu</nav>
-  </article>
-  <main class="core">
-    <article id="sidebar">
-      <h2>sidebar</h2>
-    </article>
-    <article id="feedStream">
-      Feed
-    </article>
+  <main>
+    <nav>
+      <section class="sideMenu">
+        <ul>
+          <li>Hello</li>
+          <li>heag</li>
+          <li>h2ea</li>
+          <li>fff</li>
+        </ul>
+      </section>
+      <aside id="writePip">
+        <div id="workField">
+          <label for="writeTextName">Skriv dit navn</label>
+          <input id="writeTextName" type="text">
+          <label for="writeTextMessage">Skriv dit pip!</label>
+          <textarea id="writeTextMessage">
+
+          </textarea>
+
+        </div>
+      </aside>
+    </nav>
+    <section id="feed">
+      <h2>Dit feed</h2>
+
+      <template id="pips">
+        <span class="userName">userName</span>
+        <span class="timeStamp">xx-xx-xxxx</span>
+        <p class="userMessage">Templattext</p>
+      </template>
+
+      <div id="yourPipFeed"></div>
+
+    </section>
+
   </main>
+
 </body>
 
 </html>
