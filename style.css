@@ -21,26 +21,38 @@ nav {
     flex-direction: column;
     width: 30%;
 
+
 }
+
+#coreMenu {
+    line-height: 4vw;
+    justify-self: center;
+}
+
 
 #writePip {
     display: flex;
+    width: 100%;
 }
 
 #workField {
     /* display: none; */
     background-color: aqua;
+    width: 100%;
 }
 
 #feed {
+    display: flex;
     flex-direction: column;
+    align-items: center;
     border: black 2px solid;
     width: 70%;
     height: 100vh;
 
 }
 
-ul{
+ul {
     text-decoration: none;
-    list-style: none    ;
+    list-style: none;
 }
+

@@ -3,9 +3,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=
-    , initial-scale=1.0" />
-  <script src="feed.js"></script>
+  <meta name="viewport" content="
+initial-scale=1.0" />
+  <script defer src="feed.js"></script>
   <link rel="stylesheet" href="style.css">
   <meta />
   <title>Pipper</title>
@@ -17,7 +17,7 @@
   <main>
     <nav>
       <section class="sideMenu">
-        <ul>
+        <ul id="coreMenu">
           <li>Hello</li>
           <li>heag</li>
           <li>h2ea</li>
@@ -25,24 +25,36 @@
         </ul>
       </section>
       <aside id="writePip">
-        <div id="workField">
-          <label for="writeTextName">Skriv dit navn</label>
-          <input id="writeTextName" type="text">
-          <label for="writeTextMessage">Skriv dit pip!</label>
-          <textarea id="writeTextMessage">
+        <form id="workField">
+          <div>
+            <label for="writeTextName">Skriv dit navn</label>
+            <input name="writeTextName" id="writeTextName" placeholder="Pip Hans" type="text">
+          </div>
+          <div>
+            <label for="writeTextMessage">Skriv dit pip</label>
+            <textarea name="writeTextMessage" id="writeTextMessage">
 
           </textarea>
-
-        </div>
+          </div>
+          <button type="submit">Pip!</button>
+        </form>
       </aside>
     </nav>
     <section id="feed">
       <h2>Dit feed</h2>
 
       <template id="pips">
-        <span class="userName">userName</span>
-        <span class="timeStamp">xx-xx-xxxx</span>
-        <p class="userMessage">Templattext</p>
+        <div class="individualPip">
+          <div>
+            <img src="#" alt="">
+            <p class="userName">userName</p>
+          </div>
+          <div>
+            <p class="userMessage">Templattext</p>
+          </div>
+          <p class="timeStamp">xx-xx-xxxx</p>
+        </div>
+
       </template>
 
       <div id="yourPipFeed"></div>
