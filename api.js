@@ -4,8 +4,7 @@ export async function createPip(name, content, timestamp) {
     // json encode pip objektet
     const dataObjectToSend = {
         name: name,
-        content: content,
-        timestamp: timestamp
+        content: content
     }
 
     const response = await fetch("http://127.0.0.1:8000/pips", {
