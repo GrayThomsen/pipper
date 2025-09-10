@@ -13,9 +13,9 @@ document.getElementById("color").addEventListener("input", (e) => {
     document.getElementById("counter").innerText = value.length;
 
     // console.log(value.length);
-    if (value.length > 10) {
-        alert("Max 10 tegn")
-        document.getElementById("color").value = value.substr(0,10);
+    if (value.length > 256) {
+        alert("Max 256 tegn")
+        document.getElementById("color").value = value.substr(0,256);
     }  
 })
 

@@ -32,7 +32,7 @@ if ($request === 'GET' && $uri === '/pips') {
     // herfra
     try {
         // Læs query-parametre: limit og offset
-        $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+        $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 5;
         $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
 
         // Rimelige grænser/validering
@@ -81,7 +81,7 @@ else if ($request === 'POST' && $uri === '/pips') {
                 'pipname' => $name,
                 'pipcontent' => $content
             ];
-            $sql = "INSERT INTO pips VALUES (default, :pipname, :pipcontent)";
+            $sql = "INSERT INTO pips VALUES (default, :pipname, :pipcontent, NOW())";
             $stmt= $conn->prepare(query: $sql);
             $stmt->execute(params: $data);
 

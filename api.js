@@ -1,10 +1,11 @@
 
-export async function createCat(name, color) {
+export async function createPip(name, content, timestamp) {
     // sende et post request til backend.
     // json encode pip objektet
     const dataObjectToSend = {
         name: name,
-        color: color
+        content: content,
+        timestamp: timestamp
     }
 
     const response = await fetch("http://127.0.0.1:8000/pips", {
