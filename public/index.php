@@ -23,8 +23,8 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 } catch (Throwable $e) {
-    http_response_code(500);
-    echo json_encode(["error" => "DB connection failed"]);
+    http_response_code(response_code: 500);
+    echo json_encode(value: ["error" => "DB connection failed"]);
     exit;
 }
 
@@ -32,8 +32,8 @@ $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
 
 // GET /pips  -> hent pips med paginering
-if ($method === 'GET' && preg_match('#/pips$#', $path)) {
-    $limit = isset($_GET['limit']) ? max(1, min(20, (int) $_GET['limit'])) : 3;
+if ($method === 'GET' && preg_match(pattern: '#/pips$#', subject: $path)) {
+    $limit = isset($_GET['limit']) ? max(value: 1, values: min(value: 20, values: (int) $_GET['limit'])) : 3;
 
     // Robust pagination på tid + id (tie-break)
     $beforeTime = isset($_GET['before_time']) ? $_GET['before_time'] : null; // 'YYYY-mm-dd HH:ii:ss'
@@ -45,9 +45,9 @@ if ($method === 'GET' && preg_match('#/pips$#', $path)) {
             WHERE (piptime < :bt) OR (piptime = :bt AND idpips < :bid)
             ORDER BY piptime DESC, idpips DESC
             LIMIT :lim";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':bt', $beforeTime);
-        $stmt->bindValue(':bid', $beforeId, PDO::PARAM_INT);
+        $stmt = $pdo->prepare(query: $sql);
+        $stmt->bindValue(param: ':bt', value: $beforeTime);
+        $stmt->bindValue(param: ':bid', value: $beforeId, type: PDO::PARAM_INT);
     } else {
         // Første load: nyeste først på tid
         $sql = "SELECT idpips, pipname, pipcontent, piptime

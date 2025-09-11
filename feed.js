@@ -7,8 +7,8 @@ function formatDK(ts) {
 }
 
 function renderPip(pip, { place = "top" } = {}) {
-  const tpl = document.getElementById("pip-template");
-  const frag = tpl.content.cloneNode(true);
+  const template = document.getElementById("pip-template");
+  const frag = template.content.cloneNode(true);
   frag.querySelector(".pip-name").textContent = pip.pipname ?? "Ukendt";
   frag.querySelector(".pip-text").textContent = pip.pipcontent ?? "";
   const t = frag.querySelector(".pip-time");
