@@ -1,5 +1,5 @@
 
-export async function createPip(name, content, timestamp) {
+export async function createPip(name, content) {
     // sende et post request til backend.
     // json encode pip objektet
     const dataObjectToSend = {

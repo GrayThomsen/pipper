@@ -1,58 +1,230 @@
-* {
-    margin: 0;
-    padding: 0;
+
+/* --------------------------------------------------
+   GLOBAL STYLING
+-------------------------------------------------- */
+body {
+    background-color: black;    /* sort baggrund for hele siden */
+    box-sizing: border-box;        /* inkluderer padding/border i elementets bredde */
+}
+
+h1 {
+    color: white;               /* hvid tekst */
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;  /* dekorativ/fed font til overskrifter */
+}
+
+p {
+    color: white;               /* hvid tekst */
+    font-family: BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;                  /* standard sans-serif til brødtekst */
+    font-size: 1.4rem;
+}
+
+/* --------------------------------------------------
+   FLEXBOX CONTAINER
+-------------------------------------------------- */
+
+.container {
+    background-color: black;
+    display: flex;              /* flex layout for 3 kolonner */
+    justify-content: center;    /* centrerer hele containeren horisontalt */
+    gap: 40px;                  /* afstand mellem kolonnerne */
+    margin: 40px auto;          /* centrerer containeren på siden */
+    max-width: 1400px;                 /* maks bredde, så den ikke fylder hele skærmen */
+    
+}
+
+/* --------------------------------------------------
+   SIDEMENU
+-------------------------------------------------- */
+.sidemenu {
+    width: 400px;               /* fast bredde for kolonnen */
+    height: 900px;              /* fast højde */
+    display: flex;
+    flex-direction: column;     /* lægger børn lodret */
+    gap: 10px;                  /* afstand mellem elementer */
+}
+
+.img-logo {
+    max-width: 120px;           /* logo skaleres til max bredde */
+    height: auto;               /* højden følger automatisk */
+}
+
+.icon {
+    color: white;
+    margin: 20px;               /* mellemrum rundt om ikoner */
+}
+
+.icon-home,
+.icon-profil,
+.icon-search,
+.icon-notifications {
+    display: flex;              /* ikon + tekst i én række */
+    align-items: center;        /* vertikal centering */
+    gap: 8px;                   /* afstand mellem ikon og tekst */
+}
+
+/* --------------------------------------------------
+   KNAPPER
+-------------------------------------------------- */
+#myBtn, #hentFlerePips {
+    background-color: #a56d39;
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;                /* afrundede hjørner */
+    display: block;
+    margin: auto;                       /* centrerer knappen horisontalt */
+    color: white;
+    font-size: large;
+    border: 0.1px white solid;        /* tynd kant for kontrast */
+}
+
+#myBtn:hover, #hentFlerePips:hover {
+    background-color: white;
+    color: black;                     /* hover-effekt */
 }
 
 
-main {
-    display: flex;
-    margin: 0px 20px;
+
+/* --------------------------------------------------
+   MODAL
+-------------------------------------------------- */
+.modal {
+    display: none;                      /* skjult som standard */
+    position: fixed;                    /* overlay ovenpå siden */
+    z-index: 1;                         /* liggende over alt andet */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* mørk gennemsigtig baggrund */
+    backdrop-filter: blur(2px);             /* sløring af baggrund */
+    
+    justify-content: center;             /* centrerer horisontalt */
+    align-items: flex-start;            /* starter fra toppen */
+    padding-top: 40px;                  /* luft fra toppen */
 }
 
-nav {
-    display: flex;
+
+.modal-content {
+    background-color: #0e0d0d;
+    padding: 20px;
     width: 50%;
+    max-width: 600px;
+    border-radius: 20px;
+    border: 1px solid white;
+}
+
+/* Formular i modal */
+.modal-content form{
+    display: flex; 
+    flex-direction: column;             /* inputfelter under hinanden */
+    color: white;
+    height: 300px;
+}
+
+.modal-content label {
+    font-family: BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    color: white;
+}
+
+#content {
+    width: 97%;
+    padding: 10px;
+    font-size: 1rem;
+    resize: vertical;                   /* brugeren kan ændre højden */
+    font-family: BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 
 
-.sideMenu {
-    background-color: red;
-    flex-direction: column;
-    width: 30%;
 
-
+/* Knappen inde i modal */
+#btnInsideModal{
+    background-color: #a56d39;
+    width: 100px;
+    height: 40px;
+    border-radius: 10px;
+    margin: 20px 40px;
+    color: white;
+    font-size: large;
+    border: 0.1px white solid;
+    display: block;
+    margin: auto;                       /* centrerer horisontalt */
 }
 
-#coreMenu {
-    line-height: 4vw;
-    justify-self: center;
+
+/* Close-knap (X) i modal */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
-
-#writePip {
-    display: flex;
-    width: 100%;
-}
-
-#workField {
-    /* display: none; */
-    background-color: aqua;
-    width: 100%;
-}
-
-#feed {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: black 2px solid;
-    width: 70%;
-    height: 100vh;
-
-}
-
-ul {
+.close:hover,
+.close:focus {
+    color: rgb(255, 255, 255);
     text-decoration: none;
-    list-style: none;
+    cursor: pointer;
 }
 
+/* --------------------------------------------------
+   PIPS
+-------------------------------------------------- */
+.pip-container {
+    display: flex;                  /* billede + tekst side om side */
+    flex-direction: row;
+    align-items: flex-start;        /* start øverst */
+    height: 200px;
+   
+    border-radius: 30px;
+    margin: 25px;
+    padding: 20px;
+    border: 1px white solid;
+}
+
+.pip-text {
+    display: flex;
+    flex-direction: column;         /* navn øverst, så besked, så dato */
+    justify-content: flex-start;
+}
+
+.avatar {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;             /* rund avatar */
+    
+    object-fit: cover;              /* billedet fylder containeren uden at strække */
+}
+
+/* --------------------------------------------------
+   CHATFEED
+-------------------------------------------------- */
+.chatfeed {
+    background-color: rgb(0, 0, 0);
+    width: 800px;
+    padding: 20px;
+    border: 1px solid white;
+    /* tykkelse, stil, farve */
+    border-radius: 10px;
+}
+
+
+
+/* --------------------------------------------------
+   NEWSFEED
+-------------------------------------------------- */
+.newsfeed {
+    padding: 20px;
+    width: 400px;
+
+}
+
+
+
+
+@media only screen and (max-width: 600px) {
+    .newsfeed {
+        display: none;              /* skjuler newsfeed på små skærme */
+    }
+}
