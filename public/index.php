@@ -1,109 +1,112 @@
 <?php
+// index.php (uddrag til /pips endpoint)
 require '../.env';
 
-header(header: "Access-Control-Allow-Origin:*");
-header(header: "Content-Type: application/json; charset=UTF-8");
-header(header: "Access-Control-Allow-Methods: OPTIONS,GET,POST,PUT,DELETE");
-header(header: "Access-Control-Max-Age: 3600");
-header(header: "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, XRequested-With");
+// CORS headers (må gerne stå altid)
+header("Access-Control-Allow-Origin: http://127.0.0.1:5500"); // eller "*" hvis du vil
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-
-$servername = "localhost";
-$username = "root";
-$password = getenv(name: 'PASSWORD');
-
-$request = $_SERVER['REQUEST_METHOD'];
-
-// Create an if statement to check if this is a GET request
-
-    // Her håndterer vi GET-request
-    $conn = new PDO(dsn: "mysql:host=$servername;dbname=mul2025", username: $username, password: $password);
-
-    // set the PDO error mode to exception
-    $conn->setAttribute(attribute: PDO::ATTR_ERRMODE, value: PDO::ERRMODE_EXCEPTION);
-
-    $uri = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
-
-
-// Backend til lazy loading/bæredygtighed - vi vil kun have vist de 3 seneste pips og så tilføje en knap i vores frontend, hvor vi kan hente flere pips ned - skal være sammenkoblet til vores JS og DB
-
-    if ($request == "GET" && $uri == "/pips") {
-    
-      try {
-        // Læs query-parametre: limit og offset
-        $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
-        $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
-      
-        // Rimelige grænser/validering
-        if ($limit < 1) $limit = 1;
-        if ($limit > 100) $limit = 100; // undgå alt for store svar
-        if ($offset < 0) $offset = 0;
-      
-        // (Valgfrit) total antal rækker til metadata
-        $total = (int) $conn->query(query: "SELECT COUNT(*) FROM pips")->fetchColumn();
-      
-        // Hent pagineret data – bind som ints!
-        $stmt = $conn->prepare(query: "SELECT * FROM pips ORDER BY piptime DESC LIMIT :limit OFFSET :offset");
-        $stmt->bindValue(param: ':limit', value: $limit, type: PDO::PARAM_INT);
-        $stmt->bindValue(param: ':offset', value: $offset, type: PDO::PARAM_INT);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(mode: PDO::FETCH_ASSOC);
-      
-        // Returnér data + pagination-info
-        echo json_encode(value: [
-            'data' => $rows,
-            'pagination' => [
-                'limit' => $limit,
-                'offset' => $offset,
-                'total' => $total,
-                'next_offset' => ($offset + $limit < $total) ? $offset + $limit : null,
-                'prev_offset' => ($offset - $limit >= 0) ? $offset - $limit : null
-            ]
-        ]);
-      } catch(PDOException $e) {
-        http_response_code(response_code: 500);
-        echo json_encode(value: ["error" => "Connection failed: " . $e->getMessage()]);
-      }
+// Svar på preflight (OPTIONS) med 204 No Content
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
 }
-     // else check if this is a POST request and write "You wrote a POST request" back
-     else if ($request === 'POST' && $uri === '/pips') {
-      $input = (array) json_decode(json: file_get_contents(filename: 'php://input'), associative: true);
-      
-      $username = $input["pipname"];
-      $content = $input["pipcontent"];
 
-      $length = strlen(string: $content);
-  
-      if ($username !== '') { // validering: overholde regler for at gemme korrekt data
-      
-      // Backend validering PT.1 - max 256 tegn i message
-        if ($length <= 256) {
+$dsn = "mysql:host=localhost;dbname=mul2025;charset=utf8mb4";
+$user = "root";
+$pass = getenv(name: 'PASSWORD');
 
-          $data = [
-              'pipname' => $username,
-              'pipcontent' => $content
-          ];
-          $sql = "INSERT INTO pips VALUES (default, :pipname, :pipcontent, NOW())";
-          $stmt= $conn->prepare(query: $sql);
-          $stmt->execute(params: $data);
-  
-  
-          $id = $conn->lastInsertId();
-          $pip = (object) $input;
-          $pip->id = $id;
-  
-          echo json_encode(value: $pip);
-      } else {
-          echo json_encode(value: "username skal udfyldes");
-      }
+try {
+    $pdo = new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(["error" => "DB connection failed"]);
+    exit;
+}
+
+$method = $_SERVER['REQUEST_METHOD'];
+$path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
+
+// GET /pips  -> hent pips med paginering
+if ($method === 'GET' && preg_match('#/pips$#', $path)) {
+    $limit = isset($_GET['limit']) ? max(1, min(20, (int) $_GET['limit'])) : 3;
+
+    // Robust pagination på tid + id (tie-break)
+    $beforeTime = isset($_GET['before_time']) ? $_GET['before_time'] : null; // 'YYYY-mm-dd HH:ii:ss'
+    $beforeId = isset($_GET['before_id']) ? (int) $_GET['before_id'] : null;
+
+    if ($beforeTime !== null && $beforeId !== null) {
+        $sql = "SELECT idpips, pipname, pipcontent, piptime
+            FROM pips
+            WHERE (piptime < :bt) OR (piptime = :bt AND idpips < :bid)
+            ORDER BY piptime DESC, idpips DESC
+            LIMIT :lim";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':bt', $beforeTime);
+        $stmt->bindValue(':bid', $beforeId, PDO::PARAM_INT);
+    } else {
+        // Første load: nyeste først på tid
+        $sql = "SELECT idpips, pipname, pipcontent, piptime
+            FROM pips
+            ORDER BY piptime DESC, idpips DESC
+            LIMIT :lim";
+        $stmt = $pdo->prepare($sql);
     }
 
-    // Backend validering hvis message er tom eller over 250 tegn
-      else {
-          echo json_encode(value: "message skal udfyldes og må max være 256 tegn");
-      }
-  }
+    $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    $rowsDesc = $stmt->fetchAll();
 
+    // Vend til ASC (ældst -> nyest) i svaret
+    $items = array_reverse($rowsDesc);
 
+    // has_more? (find ældre end det ældste i dette sæt)
+    $hasMore = false;
+    if (!empty($items)) {
+        $oldestTime = $items[0]['piptime'];
+        $oldestId = $items[0]['idpips'];
+        $stmt2 = $pdo->prepare(
+            "SELECT 1 FROM pips
+       WHERE (piptime < :ot) OR (piptime = :ot AND idpips < :oid)
+       LIMIT 1"
+        );
+        $stmt2->bindValue(':ot', $oldestTime);
+        $stmt2->bindValue(':oid', $oldestId, PDO::PARAM_INT);
+        $stmt2->execute();
+        $hasMore = (bool) $stmt2->fetchColumn();
+    }
 
-?>
+    echo json_encode([
+        'items' => $items,
+        'has_more' => $hasMore
+    ]);
+    exit;
+}
+
+// POST /pips  -> (valgfrit) opret nyt pip
+if ($method === 'POST' && preg_match('#/pips$#', $path)) {
+    $input = json_decode(file_get_contents('php://input'), true) ?: [];
+    $name = trim($input['pipname'] ?? '');
+    $text = trim($input['pipcontent'] ?? '');
+
+    if ($name === '' || $text === '') {
+        http_response_code(400);
+        echo json_encode(["error" => "pipname og pipcontent er påkrævet"]);
+        exit;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO pips (pipname, pipcontent, piptime)
+                         VALUES (:n, :c, NOW())");
+    $stmt->execute([':n' => $name, ':c' => $text]);
+
+    echo json_encode(["ok" => true, "idpips" => (int) $pdo->lastInsertId()]);
+    exit;
+}
+
+// Fald tilbage: 404
+http_response_code(404);
+echo json_encode(["error" => "Not found"]);

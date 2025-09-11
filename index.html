@@ -1,124 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kvid'r</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="feed.js" defer></script>
+    <script type="module" src="counter.js" defer></script>
+  </head>
+  <body>
+    <!-- Telefon-agtig, centreret kolonne -->
+    <main class="app-shell">
+      <header class="topbar">
+        <h1>Kvid'r</h1>
+      </header>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pipper</title>
-    <link rel="stylesheet" href="style.css">
+      <section class="composer" aria-label="Skriv et nyt pip">
+        <label for="username">Brugernavn</label>
+        <input id="username" name="username" type="text" placeholder="Brugernavn" autocomplete="username" />
 
-    <!-- Loader Feather Icons-biblioteket (ikon-sæt) -->
-    <script src="https://unpkg.com/feather-icons"></script>
+        <label for="message">Besked</label>
+        <textarea id="message" name="message" rows="3" placeholder="Hvad sker der?"></textarea>
 
-    <!-- Loader min JavaScript-fil, som styrer modal, pips og datahentning -->
-    <script src="feed.js" type="module" defer> </script>
-
-</head>
-
-<body>
-
-    <div class="container">
-        <!-- Side-menu: Venstre kolonne med logo, ikoner og knap til at poste pip -->
-
-        <div class="sidemenu">
-
-            <!-- Logo øverst -->
-            <img class="img-logo" src="img/pipper-logo.png" alt="logo">
-
-            <!-- Navigations-ikoner (erstattes med SVG via Feather Icons i JS) -->
-            <div class="icon-home">
-                <i class="icon" data-feather="home"></i>
-                <p>Home</p>
-            </div>
-
-            <div class="icon-profil">
-                <i class="icon" data-feather="user"></i>
-                <p>Profile</p>
-            </div>
-
-            <div class="icon-search">
-                <i class="icon" data-feather="search"></i>
-                <p>Search</p>
-            </div>
-
-            <div class="icon-notifications">
-                <i class="icon" data-feather="bell"></i>
-                <p>Notifications</p>
-            </div>
-
-            <!-- Knap der åbner modalvinduet, hvor brugeren kan skrive et pip -->
-            <button id="myBtn">Post my pip</button>
+        <div class="composer-actions">
+          <button id="postBtn" type="button">Pip!</button>
         </div>
+      </section>
+
+      <!-- Statusområde (bevares hvis din JS bruger det) -->
+      <p id="status" class="status" aria-live="polite"></p>
+
+      <!-- Selve feedet: JS indsætter pips her -->
+      <section id="feed" class="feed" aria-live="polite" aria-busy="false"></section>
+
+      <!-- Load older: bevarer id=loadMore hvis din kode bruger det -->
+      <div class="loadmore-wrap">
+        <button id="loadMore" type="button" class="loadmore-btn">Hent ældre pips</button>
+      </div>
+
+      <!-- Template som din JS kan klone (hvis du allerede bruger template-rendering) -->
+      <template id="pip-template">
+        <article class="pip">
+          <div class="pip-header">
+            <strong class="pip-name"></strong>
+            <time class="pip-time" datetime=""></time>
+          </div>
+          <p class="pip-text"></p>
+        </article>
+      </template>
+    </main>
+
+    <!-- Bevar dine scripts uændret -->
+    <!-- feed.js importerer selv api.js -->
 
 
-        <!-- Hoved-feed: Midterste kolonne hvor pips vises -->
-        <div class="chatfeed">
-
-
-            <!-- Modal-vinduet: Pop-up form til at skrive og poste et pip -->
-            <div id="myModal" class="modal">
-
-                <!-- Modalens indhold -->
-                <div class="modal-content">
-
-                    <!-- Luk-knap (X) i hjørnet -->
-                    <span class="close">&times;</span>
-                    <p>Hvad vil du dele?</p>
-
-                    <!-- Formularen til at indsende et pip -->
-                    <form id="pip-form">
-                        <!-- Inputfelt til brugernavn -->
-                        <label for="username">Username:</label><br>
-
-
-                        <input type="text" placeholder="Brugernavn..." id="username" name="username" required>
-                        <br><!-- Tekstfelt til selve pip-beskeden -->
-                        <label for="message">Message:</label><br>
-                        <textarea id="content" name="message" rows="5" placeholder="Skriv dit pip her..."
-                            maxlength="250" required></textarea>
-                        <!-- Tæller viser hvor mange tegn der er tilbage (opdateres med JS) -->
-                        <span id="charCount">250</span>
-
-                        <!-- Knap til at indsende pip’et -->
-                        <button type="submit" id="btnInsideModal">Pip</button>
-                    </form>
-                </div>
-
-            </div>
-
-            <!-- Skjult HTML-template der bruges til at skabe nye pips via JS -->
-
-            <template id="pip">
-                <div class="pip-container">
-                    <img class="avatar" alt="avatar" />
-                    <div class="pip-text">
-                        <p class="username"></p>
-                        <p class="content"></p>
-                        <p class="created_ad"></p>
-                    </div>
-
-                </div>
-            </template>
-
-            <!-- Her indsættes alle pips (JS kloner <template> og lægger dem her) -->
-            <div id="pips"> </div>
-
-
-
-            <!-- Knap der henter flere pips fra serveren (lazy loading) -->
-            <button type="submit" id="hentFlerePips">Se flere pips</button>
-
-        </div>
-
-
-        <!-- Højre kolonne: Nyhedsfeed eller reklameområde -->
-        <div class="newsfeed">
-
-            <img src="img/newsfeed-img.png" alt="">
-        </div>
-
-    </div>
-
-</body>
-
+  </body>
 </html>

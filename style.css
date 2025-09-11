@@ -1,230 +1,211 @@
-
-/* --------------------------------------------------
-   GLOBAL STYLING
--------------------------------------------------- */
-body {
-    background-color: black;    /* sort baggrund for hele siden */
-    box-sizing: border-box;        /* inkluderer padding/border i elementets bredde */
+/* ====== Basal reset og tema ====== */
+:root{
+  --bg: #0a0a0a;
+  --paper: #ffffff;
+  --ink: #111827;
+  --muted: #6b7280;
+  --ui: #e5e7eb;
+  --brand: #2563eb;
+  --brand-ink: #ffffff;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0,0,0,.2);
+  --maxw: 420px;        /* telefonbredde */
+  --gap: 12px;
+  --pad: 12px;
 }
 
-h1 {
-    color: white;               /* hvid tekst */
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;  /* dekorativ/fed font til overskrifter */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body{
+  margin: 0;
+  color: var(--ink);
+  font: 16px/1.45 system-ui;
+  background: radial-gradient(1200px 800px at 50% -200px, #000 100%);
+  display: grid;
+  place-items: start center;        /* centrer hele appen horisontalt */
+  padding: 24px 12px;
 }
 
-p {
-    color: white;               /* hvid tekst */
-    font-family: BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;                  /* standard sans-serif til brødtekst */
-    font-size: 1.4rem;
+/* ====== Centrer “hovedcontainer” uanset hvad den hedder ======
+   Matcher almindelige top-containere UDEN at kræve bestemte navne */
+main, #app, .app, .container, .wrapper, body > div:first-of-type {
+  width: 100%;
+  max-width: var(--maxw);
+  background: #f8fafc;
+  border: 1px solid #0f172a1a;
+  border-radius: calc(var(--radius) + 8px);
+  box-shadow: var(--shadow);
+  min-height: min(800px, 96vh);
+  overflow: clip;
+  display: grid;
+  grid-auto-rows: max-content;
 }
 
-/* --------------------------------------------------
-   FLEXBOX CONTAINER
--------------------------------------------------- */
-
-.container {
-    background-color: black;
-    display: flex;              /* flex layout for 3 kolonner */
-    justify-content: center;    /* centrerer hele containeren horisontalt */
-    gap: 40px;                  /* afstand mellem kolonnerne */
-    margin: 40px auto;          /* centrerer containeren på siden */
-    max-width: 1400px;                 /* maks bredde, så den ikke fylder hele skærmen */
-    
+/* ====== Topbar (hvis du har en topbar/header) ====== */
+header, .topbar, .header {
+  position: sticky;
+  top: 0;
+  background: #ffffffcc;
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ui);
+  padding: 14px 16px;
+}
+header h1, .topbar h1, .header h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: .2px;
 }
 
-/* --------------------------------------------------
-   SIDEMENU
--------------------------------------------------- */
-.sidemenu {
-    width: 400px;               /* fast bredde for kolonnen */
-    height: 900px;              /* fast højde */
-    display: flex;
-    flex-direction: column;     /* lægger børn lodret */
-    gap: 10px;                  /* afstand mellem elementer */
+/* ====== Composer / input-område (uden at kende navne) ======
+   - Stiler det FØRSTE område med inputs som “composer”
+   - Sticky under topbaren, så inputs bliver i toppen */
+section:first-of-type, form:first-of-type {
+  background: #fff;
+  border-bottom: 1px solid var(--ui);
+  padding: var(--pad);
+  display: grid;
+  gap: var(--gap);
 }
 
-.img-logo {
-    max-width: 120px;           /* logo skaleres til max bredde */
-    height: auto;               /* højden følger automatisk */
+/* Gør første sektion/form sticky hvis :has() understøttes */
+@supports selector(:has(*)) {
+  section:first-of-type:has(input, textarea),
+  form:first-of-type:has(input, textarea){
+    position: sticky;
+    top: 54px; /* lige under headeren */
+    z-index: 2;
+  }
 }
 
-.icon {
-    color: white;
-    margin: 20px;               /* mellemrum rundt om ikoner */
+/* Inputs/textarea knapper (meget generiske selektorer) */
+input[type="text"], input[type="search"], input:not([type]),
+textarea{
+  width: 100%;
+  border: 1px solid var(--ui);
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--ink);
+  outline: none;
+}
+input:focus, textarea:focus{
+  border-color: #bfd3ff;
+  box-shadow: 0 0 0 3px #3b82f60f;
+  background: #fff;
+}
+textarea{ resize: vertical; min-height: 72px; }
+
+/* Primær knap (forsøger at ramme “Send” uanset navn) */
+button, .btn, [role="button"]{
+  border: none;
+  background: var(--brand);
+  color: var(--brand-ink);
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform .04s ease, filter .2s ease;
+}
+button:hover, .btn:hover, [role="button"]:hover{ filter: brightness(1.05); }
+button:active, .btn:active, [role="button"]:active{ transform: translateY(1px); }
+
+/* Hvis din HTML allerede har en “actions”-wrapper, forbedrer vi layoutet */
+.composer-actions, .actions, .controls{
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-.icon-home,
-.icon-profil,
-.icon-search,
-.icon-notifications {
-    display: flex;              /* ikon + tekst i én række */
-    align-items: center;        /* vertikal centering */
-    gap: 8px;                   /* afstand mellem ikon og tekst */
+/* ====== Statuslinje (bevar eksisterende #status hvis den findes) ====== */
+#status, .status{
+  margin: 0;
+  padding: 8px var(--pad);
+  color: var(--muted);
+  border-bottom: 1px solid var(--ui);
+  background: #f8fafc;
+  min-height: 24px;
 }
 
-/* --------------------------------------------------
-   KNAPPER
--------------------------------------------------- */
-#myBtn, #hentFlerePips {
-    background-color: #a56d39;
-    width: 150px;
-    height: 40px;
-    border-radius: 10px;                /* afrundede hjørner */
-    display: block;
-    margin: auto;                       /* centrerer knappen horisontalt */
-    color: white;
-    font-size: large;
-    border: 0.1px white solid;        /* tynd kant for kontrast */
+/* ====== Feed (uden at ændre id/class-navne) ======
+   - Matcher #feed, .feed samt ethvert element med “feed” i id/class */
+#feed, .feed, [id*="feed"], [class*="feed"]{
+  display: grid;
+  gap: 10px;
+  padding: var(--pad);
+  background: #f8fafc;
+  overflow: auto;           /* feed ruller, inputs forbliver øverst */
+  min-height: 0;            /* god rulleadfærd i grid */
 }
 
-#myBtn:hover, #hentFlerePips:hover {
-    background-color: white;
-    color: black;                     /* hover-effekt */
+/* ====== Pip-kort: meget bredt match på “pip” og generiske children ======
+   - Hvis du HAR en .pip/.tweet/.post etc., styles den pænt
+   - Ellers får #feed’s direkte børn et “kort”-look */
+.pip, .tweet, .post, .card,
+#feed > article, #feed > li, #feed > div,
+.feed > article, .feed > li, .feed > div,
+[id*="feed"] > article, [id*="feed"] > li, [id*="feed"] > div {
+  background: var(--paper);
+  border: 1px solid var(--ui);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
 }
 
-
-
-/* --------------------------------------------------
-   MODAL
--------------------------------------------------- */
-.modal {
-    display: none;                      /* skjult som standard */
-    position: fixed;                    /* overlay ovenpå siden */
-    z-index: 1;                         /* liggende over alt andet */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3); /* mørk gennemsigtig baggrund */
-    backdrop-filter: blur(2px);             /* sløring af baggrund */
-    
-    justify-content: center;             /* centrerer horisontalt */
-    align-items: flex-start;            /* starter fra toppen */
-    padding-top: 40px;                  /* luft fra toppen */
+/* Headerlinje inde i kortet (navn + tid) – matcher typiske varianter */
+.pip-header, .post-header, .tweet-header,
+.pip .header, .post .header, .tweet .header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: .92rem;
+}
+.pip-name, .name, .author, .user { font-weight: 700; color: var(--ink); }
+.pip-time, .time, time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: .85rem;
 }
 
-
-.modal-content {
-    background-color: #0e0d0d;
-    padding: 20px;
-    width: 50%;
-    max-width: 600px;
-    border-radius: 20px;
-    border: 1px solid white;
+/* Tekstindhold i kortet */
+.pip-text, .text, .content, .message, .body, p {
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
-/* Formular i modal */
-.modal-content form{
-    display: flex; 
-    flex-direction: column;             /* inputfelter under hinanden */
-    color: white;
-    height: 300px;
+/* ====== Load more (bevar din knap uanset navn) ====== */
+#loadMore, .loadmore-btn, .load-more, .More, .older {
+  border: 1px solid var(--ui);
+  background: #fff;
+  color: #111;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+#loadMore:hover, .loadmore-btn:hover, .load-more:hover, .More:hover, .older:hover {
+  background: #f3f4f6;
 }
 
-.modal-content label {
-    font-family: BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    font-size: 1rem;
-    color: white;
+/* Wrapper omkring “load more” hvis du har sådan en */
+.loadmore-wrap, .load, .more {
+  border-top: 1px solid var(--ui);
+  background: #fff;
+  padding: 10px var(--pad);
+  display: flex;
+  justify-content: center;
 }
 
-#content {
-    width: 97%;
-    padding: 10px;
-    font-size: 1rem;
-    resize: vertical;                   /* brugeren kan ændre højden */
-    font-family: BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
+/* Scrollbar (diskret) */
+#feed::-webkit-scrollbar, .feed::-webkit-scrollbar, [id*="feed"]::-webkit-scrollbar{ width: 10px; }
+#feed::-webkit-scrollbar-thumb, .feed::-webkit-scrollbar-thumb, [id*="feed"]::-webkit-scrollbar-thumb{ background: #cbd5e1; border-radius: 999px; }
+#feed::-webkit-scrollbar-track, .feed::-webkit-scrollbar-track, [id*="feed"]::-webkit-scrollbar-track{ background: transparent; }
 
-
-
-
-/* Knappen inde i modal */
-#btnInsideModal{
-    background-color: #a56d39;
-    width: 100px;
-    height: 40px;
-    border-radius: 10px;
-    margin: 20px 40px;
-    color: white;
-    font-size: large;
-    border: 0.1px white solid;
-    display: block;
-    margin: auto;                       /* centrerer horisontalt */
-}
-
-
-/* Close-knap (X) i modal */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* --------------------------------------------------
-   PIPS
--------------------------------------------------- */
-.pip-container {
-    display: flex;                  /* billede + tekst side om side */
-    flex-direction: row;
-    align-items: flex-start;        /* start øverst */
-    height: 200px;
-   
-    border-radius: 30px;
-    margin: 25px;
-    padding: 20px;
-    border: 1px white solid;
-}
-
-.pip-text {
-    display: flex;
-    flex-direction: column;         /* navn øverst, så besked, så dato */
-    justify-content: flex-start;
-}
-
-.avatar {
-    height: 100px;
-    width: 100px;
-    border-radius: 50%;             /* rund avatar */
-    
-    object-fit: cover;              /* billedet fylder containeren uden at strække */
-}
-
-/* --------------------------------------------------
-   CHATFEED
--------------------------------------------------- */
-.chatfeed {
-    background-color: rgb(0, 0, 0);
-    width: 800px;
-    padding: 20px;
-    border: 1px solid white;
-    /* tykkelse, stil, farve */
-    border-radius: 10px;
-}
-
-
-
-/* --------------------------------------------------
-   NEWSFEED
--------------------------------------------------- */
-.newsfeed {
-    padding: 20px;
-    width: 400px;
-
-}
-
-
-
-
-@media only screen and (max-width: 600px) {
-    .newsfeed {
-        display: none;              /* skjuler newsfeed på små skærme */
-    }
+/* Små skærme = fuldbredde som “rigtig” mobil */
+@media (max-width: 460px){
+  :root{ --maxw: 100%; }
+  main, #app, .app, .container, .wrapper, body > div:first-of-type { border-radius: 0; min-height: 100vh; }
 }
