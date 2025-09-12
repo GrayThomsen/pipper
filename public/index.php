@@ -9,8 +9,8 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 
 // Svar på preflight (OPTIONS) med 204 No Content
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-  http_response_code(204);
-  exit;
+    http_response_code(204);
+    exit;
 }
 
 $dsn = "mysql:host=localhost;dbname=mul2025;charset=utf8mb4";
@@ -33,7 +33,8 @@ $path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
 
 // GET /pips  -> hent pips med paginering
 if ($method === 'GET' && preg_match(pattern: '#/pips$#', subject: $path)) {
-    $limit = isset($_GET['limit']) ? max(value: 1, values: min(value: 20, values: (int) $_GET['limit'])) : 3;
+    $limit = min(20, $_GET['limit'] ?? 3);
+
 
     // Robust pagination på tid + id (tie-break)
     $beforeTime = isset($_GET['before_time']) ? $_GET['before_time'] : null; // 'YYYY-mm-dd HH:ii:ss'

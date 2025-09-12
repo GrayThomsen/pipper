@@ -9,7 +9,7 @@
     <script type="module" src="counter.js" defer></script>
   </head>
   <body>
-    <!-- Telefon-agtig, centreret kolonne -->
+    <!-- Centreret kolonne -->
     <main class="app-shell">
       <header class="topbar">
         <h1>Kvid'r</h1>
@@ -27,18 +27,18 @@
         </div>
       </section>
 
-      <!-- Statusområde (bevares hvis din JS bruger det) -->
+      <!-- Statusområde-->
       <p id="status" class="status" aria-live="polite"></p>
 
       <!-- Selve feedet: JS indsætter pips her -->
       <section id="feed" class="feed" aria-live="polite" aria-busy="false"></section>
 
-      <!-- Load older: bevarer id=loadMore hvis din kode bruger det -->
+      <!-- Load older: bevarer id=loadMore-->
       <div class="loadmore-wrap">
         <button id="loadMore" type="button" class="loadmore-btn">Hent ældre pips</button>
       </div>
 
-      <!-- Template som din JS kan klone (hvis du allerede bruger template-rendering) -->
+      <!-- Template som JS kloner -->
       <template id="pip-template">
         <article class="pip">
           <div class="pip-header">
@@ -49,10 +49,5 @@
         </article>
       </template>
     </main>
-
-    <!-- Bevar dine scripts uændret -->
-    <!-- feed.js importerer selv api.js -->
-
-
   </body>
 </html>

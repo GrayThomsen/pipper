@@ -53,7 +53,7 @@ let hasMore = true;
     cursor = nextCursor;
     hasMore = more;
     if (!hasMore) {
-      showDoneMessage(); // kun nederst, ikke i statuslinjen
+      showDoneMessage();
     }
   } catch (e) {
     console.error(e);
@@ -72,12 +72,13 @@ document.getElementById("postBtn")?.addEventListener("click", async () => {
 
   try {
     await createPip(pipname, pipcontent);
-    // Optimistisk prepend
+
     renderPip(
       { pipname, pipcontent, piptime: new Date().toISOString().slice(0,19).replace("T"," ") },
       { place: "top" }
     );
     msgEl.value = "";
+    
     //bubbles=true betyder at eventet ikke kun sker lokalt, men "bobler op" til parent elementet. 
     msgEl.dispatchEvent(new Event("input", { bubbles: true }));
   } catch (e) {

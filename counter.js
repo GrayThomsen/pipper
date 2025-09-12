@@ -53,38 +53,40 @@ function ensureCounter() {
 
     // farveskift på tekst
     if (left <= 0) {
-      meter.style.color = "#b91c1c"; // rød
+      meter.style.color = "#b91c1c"; // red
     } else if (left <= 32) {
       meter.style.color = "#b45309"; // orange
     } else if (left <= 64) {
-      meter.style.color = "#475569"; // slate
+      meter.style.color = "#475569"; // grey
     } else {
       meter.style.color = "var(--muted)";
     }
 
-    // (valgfrit) disable “Send” hvis tomt
+    // Ddisable "Pip" hvis tomt
     if (sendBtn) sendBtn.disabled = used === 0;
   }
 
-  // Lyttere
+  // listener
   textarea.addEventListener("input", update);
   textarea.addEventListener("paste", (e) => {
+    
     // klip ned manuelt ved paste (maxlength fanger det også, men dette er mere smooth)
-    const t = e.clipboardData?.getData("text") ?? "";
+    
+    const text = e.clipboardData?.getData("text") ?? "";
     const room = MAX - textarea.value.length;
     if (room <= 0) {
       e.preventDefault();
       return;
     }
-    if (t.length > room) {
+    if (text.length > room) {
       e.preventDefault();
       const selStart = textarea.selectionStart ?? textarea.value.length;
       const selEnd = textarea.selectionEnd ?? textarea.value.length;
       const before = textarea.value.slice(0, selStart);
       const after = textarea.value.slice(selEnd);
-      textarea.value = before + t.slice(0, room) + after;
+      textarea.value = before + text.slice(0, room) + after;
       // flyt caret
-      const pos = before.length + Math.min(t.length, room);
+      const pos = before.length + Math.min(text.length, room);
       textarea.setSelectionRange(pos, pos);
       update();
     }
