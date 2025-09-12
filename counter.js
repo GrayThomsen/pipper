@@ -46,6 +46,7 @@ function ensureCounter() {
 
     // Farver og progress
     const pct = (used / MAX) * 100;
+    
     // baggrundsbar (lys) + “fyld” som gradient
     meter.style.background = `
       linear-gradient(90deg, #cbd5e1 ${pct}%, #e5e7eb ${pct}%)
